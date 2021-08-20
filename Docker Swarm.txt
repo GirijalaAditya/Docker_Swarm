@@ -1,0 +1,113 @@
+Docker Swarm:
+=============
+
+docker swarm init
+
+docker swarm join-token worker
+
+docker swarm join-token manager
+
+docker node ls
+
+Tomcat:
+-------
+docker service create --name appserver -p 80:8080 --replicas 6 tomcat
+
+docker service ls
+
+docker service ps appserver
+
+docker service rm appserver
+
+Tomee:
+------
+docker service create --name tomee -p 80:8080 --replicas 8 tomee
+
+docker service ps tomee
+
+docker service rm tomee
+
+HTTPD:
+------
+docker service create --name web -p 80:80 --replicas 4 httpd
+
+docker service ls
+
+docker service ps web
+
+docker service scale web=6
+
+docker service scale web=2
+
+docker service rm web
+
+Rolling Updates:
+----------------
+docker service create --name web -p 80:80 --replicas 4 nginx
+
+docker service ls
+
+docker service ps web
+
+docker service update -- image httpd web
+
+docker service ps web | grep Running
+
+docker service rollback web (or) docker service update --rollback web
+
+docker service ps web | grep Running
+
+To Remove Worker Node by Manager:
+---------------------------------
+docker node update --availability drain worker1
+
+To make Worker Rejoin the Swarm:
+--------------------------------
+docker node update --availability active worker1
+
+From Worker Node:
+-----------------
+docker swarm leave
+
+
+docker network create --driver overlay network1
+
+docker network create --driver overlay network2
+
+docker network ls
+
+docker service create --name web -p 80:80 --replicas 6 --network network1 nginx 
+
+docker service inspect web --pretty
+
+docker service update --network-add network1 web
+
+Docker Stack:
+=============
+Docker Swarm + Docker Compose
+
+docker stack deploy -c docker-compose.yaml web
+
+docker stack ls
+
+docker stack ps web
+
+docker stack rm web
+
+docker stack services
+
+Docker Secret:
+--------------
+docker secret create secret_name
+
+printf "Password" | docker secret create mysecret -
+
+docker service create --name web -p 80:80 --replicas 4 --secret mysecret tomcat
+
+docker exec -it container_id /bin/bash move to /run/secrets
+
+docker secret ls
+
+docker secret rm secret_name
+
+
